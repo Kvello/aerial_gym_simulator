@@ -349,11 +349,11 @@ class EnvManager(BaseManager):
             > self.cfg.env.collision_force_threshold
         )
 
-    def reset_terminated_and_truncated_envs(self):
+    def reset_terminated_and_truncated_envs(self,success_tensor):
         collision_envs = self.collision_tensor.nonzero(as_tuple=False).squeeze(-1)
         truncation_envs = self.truncation_tensor.nonzero(as_tuple=False).squeeze(-1)
         envs_to_reset = (
-            (self.collision_tensor * int(self.cfg.env.reset_on_collision) + self.truncation_tensor)
+            (self.collision_tensor * int(self.cfg.env.reset_on_collision) + self.truncation_tensor + success_tensor)
             .nonzero(as_tuple=False)
             .squeeze(-1)
         )
@@ -378,8 +378,8 @@ class EnvManager(BaseManager):
         # render viewer GUI
         self.IGE_env.render_viewer()
 
-    def post_reward_calculation_step(self):
-        envs_to_reset = self.reset_terminated_and_truncated_envs()
+    def post_reward_calculation_step(self,success_tensor):
+        envs_to_reset = self.reset_terminated_and_truncated_envs(success_tensor)
         # render is performed after reset to ensure that the sensors are updated from the new robot state.
         self.render(render_components="sensors")
         return envs_to_reset
