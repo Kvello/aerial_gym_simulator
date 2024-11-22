@@ -54,7 +54,7 @@ class EnvWithObstaclesCfg:
             "right_wall": True,
             "back_wall": True,
             "front_wall": True,
-            "top_wall": False,
+            "top_wall": True,
             "bottom_wall": True,
         }
 
